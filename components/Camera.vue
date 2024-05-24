@@ -8,6 +8,12 @@
       <div v-else>
         <p>Fetching location...</p>
       </div>
+      <div v-if="battery">
+        <p class="battery-status">
+          Battery: {{ Math.round(battery.level * 100) }}%
+          <span v-if="battery.charging">(Charging)</span>
+        </p>
+      </div>
       <nuxt-link to="/tel">
         <button class="home-button">Appel</button>
       </nuxt-link>
@@ -22,6 +28,7 @@
         <div v-for="(photo, index) in photos" :key="index" class="photo-item">
           <img :src="photo.url" alt="Captured photo">
           <p>{{ photo.time }}</p>
+          <button @click="deletePhoto(index)">Delete</button>
         </div>
       </div>
     </main>
@@ -36,7 +43,8 @@ export default {
       videoElement: null,
       canvasElement: null,
       photos: [],
-      location: null
+      location: null,
+      battery: null
     };
   },
   mounted() {
@@ -45,6 +53,7 @@ export default {
     this.requestNotificationPermission();
     this.fetchLocation();
     this.loadPhotos();
+    this.fetchBatteryStatus();
   },
   methods: {
     async startCamera() {
@@ -70,18 +79,23 @@ export default {
       this.canvasElement.width = this.videoElement.videoWidth;
       this.canvasElement.height = this.videoElement.videoHeight;
       context.drawImage(this.videoElement, 0, 0, this.canvasElement.width, this.canvasElement.height);
-      const photoDataUrl = this.canvasElement.toDataURL('image/png');
-      const currentTime = new Date().toLocaleString();
-      const photo = { url: photoDataUrl, time: currentTime };
+      const dataUrl = this.canvasElement.toDataURL('image/png');
+      const photo = {
+        url: dataUrl,
+        time: new Date().toLocaleString()
+      };
       this.photos.push(photo);
       this.savePhotos();
-      this.showNotification('Photo taken', 'Your photo has been captured successfully!');
+    },
+    deletePhoto(index) {
+      this.photos.splice(index, 1);
+      this.savePhotos();
     },
     requestNotificationPermission() {
       if ('Notification' in window) {
         Notification.requestPermission().then(permission => {
           if (permission !== 'granted') {
-            console.warn('Permission not granted for notifications');
+            console.log('Permission not granted for notifications');
           }
         });
       }
@@ -116,7 +130,21 @@ export default {
       if (photos) {
         this.photos = JSON.parse(photos);
       }
-    }
+    },
+    async fetchBatteryStatus() {
+      if ('getBattery' in navigator) {
+        try {
+          const battery = await navigator.getBattery();
+          this.battery = battery;
+          battery.addEventListener('chargingchange', this.updateBatteryStatus);
+          battery.addEventListener('levelchange', this.updateBatteryStatus);
+        } catch (error) {
+          console.error("Error fetching battery status:", error);
+        }
+      } else {
+        console.error("Battery Status API is not supported by this browser.");
+      }
+    },
   }
 };
 </script>
@@ -129,10 +157,18 @@ header {
   text-align: center;
   border-radius: 10px;
   margin-bottom: 20px;
+  position: relative;
 }
 
 header h1 {
   margin: 0;
+}
+
+.battery-status {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 0.9em;
 }
 
 main {
