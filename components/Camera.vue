@@ -8,6 +8,9 @@
       <div v-else>
         <p>Fetching location...</p>
       </div>
+      <nuxt-link to="/tel">
+        <button class="home-button">Appel</button>
+      </nuxt-link>
     </header>
     <main>
       <video ref="video" autoplay></video>
@@ -22,9 +25,6 @@
         </div>
       </div>
     </main>
-    <nuxt-link to="/tel.vue">
-      <button class="home-button">Appel</button>
-    </nuxt-link>
   </div>
 </template>
 
