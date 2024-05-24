@@ -22,6 +22,9 @@
         </div>
       </div>
     </main>
+    <nuxt-link to="/tel.vue">
+      <button class="home-button">Appel</button>
+    </nuxt-link>
   </div>
 </template>
 
@@ -169,5 +172,16 @@ button:hover {
   height: auto;
   border: 2px solid #ddd;
   border-radius: 5px;
+}
+
+.home-button {
+  padding: 15px 30px;
+  font-size: 1.5em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 </style>

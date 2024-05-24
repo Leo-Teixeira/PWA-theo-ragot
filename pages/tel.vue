@@ -11,6 +11,9 @@
       </div>
       <button class="call-button" @click="makeCall">Call</button>
     </main>
+    <nuxt-link to="/index.vue">
+        <button class="home-button">Go to Home</button>
+    </nuxt-link>
   </div>
 </template>
 
@@ -101,5 +104,15 @@ header h1 {
 
 .call-button:hover {
   background-color: #45a049;
+}
+.home-button {
+  padding: 15px 30px;
+  font-size: 1.5em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 </style>
