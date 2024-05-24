@@ -11,7 +11,7 @@
       </div>
       <button class="call-button" @click="makeCall">Call</button>
     </main>
-    <nuxt-link to="/index.vue">
+    <nuxt-link to="/">
         <button class="home-button">Go to Home</button>
     </nuxt-link>
   </div>
