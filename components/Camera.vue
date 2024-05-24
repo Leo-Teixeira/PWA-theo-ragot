@@ -8,7 +8,7 @@
       <canvas ref="canvas" style="display:none;"></canvas>
       <div class="photo-list">
         <div v-for="(photo, index) in photos" :key="index" class="photo-item">
-          <img :src="photo.url" alt="Captured photo">
+          <img :src="photo.url" alt="Captured photo" :class="photo.isOnline ? 'online' : 'offline'">
           <p>{{ photo.time }}</p>
           <button @click="deletePhoto(index)">Delete</button>
         </div>
@@ -18,7 +18,6 @@
 </template>
 
 <script>
-// import headder from './Headder.vue';
 export default {
   data() {
     return {
@@ -27,14 +26,21 @@ export default {
       canvasElement: null,
       photos: [],
       location: null,
-      battery: null
+      battery: null,
+      isOnline: navigator.onLine,
     };
+  },
+  beforeUnmount() {
+    window.removeEventListener('online', this.updateOnlineStatus);
+    window.removeEventListener('offline', this.updateOnlineStatus);
   },
   mounted() {
     this.videoElement = this.$refs.video;
     this.canvasElement = this.$refs.canvas;
     this.requestNotificationPermission();
     this.loadPhotos();
+    window.addEventListener('online', this.updateOnlineStatus);
+    window.addEventListener('offline', this.updateOnlineStatus);
   },
   methods: {
     async startCamera() {
@@ -63,7 +69,8 @@ export default {
       const dataUrl = this.canvasElement.toDataURL('image/png');
       const photo = {
         url: dataUrl,
-        time: new Date().toLocaleString()
+        time: new Date().toLocaleString(),
+        isOnline: this.isOnline
       };
       this.photos.push(photo);
       this.savePhotos();
@@ -93,6 +100,7 @@ export default {
         navigator.vibrate([200, 100, 200]);
       }
     },
+
     savePhotos() {
       localStorage.setItem('photos', JSON.stringify(this.photos));
     },
@@ -102,24 +110,26 @@ export default {
         this.photos = JSON.parse(photos);
       }
     },
+    async updateOnlineStatus() {
+      this.isOnline = navigator.onLine;
+      if (this.isOnline) {
+        // Mettre à jour les photos pour marquer celles qui étaient hors ligne comme maintenant en ligne
+        this.photos.forEach(photo => {
+          if (!photo.isOnline) {
+            photo.isOnline = true;
+          }
+        });
+        localStorage.setItem('photos', JSON.stringify(this.photos));
+        this.$store.dispatch('updatePhotos', this.photos);
+        await this.notify('Synchronisation des images effectuée !');
+        alert('Synchronisation des images effectuée !');
+      }
+    }
   }
 };
 </script>
 
 <style scoped>
-header {
-  background-color: #4CAF50;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-header h1 {
-  margin: 0;
-}
 
 .battery-status {
   position: absolute;
@@ -163,7 +173,6 @@ button:hover {
 .photo-item img {
   width: 100px;
   height: auto;
-  border: 2px solid #ddd;
   border-radius: 5px;
 }
 
@@ -176,5 +185,13 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+}
+
+.online {
+  border: 5px solid green;
+}
+
+.offline {
+  border: 5px solid red;
 }
 </style>

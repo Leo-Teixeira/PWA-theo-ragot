@@ -41,7 +41,7 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      name: 'La Meilleur App du monde',
+      name: 'Clement le meilleur',
       short_name: 'BestApp',
       lang: 'en'
     }
