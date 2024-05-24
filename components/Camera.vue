@@ -103,6 +103,12 @@ export default {
     showNotification(title, body) {
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, { body });
+        this.triggerVibration();
+      }
+    },
+    triggerVibration() {
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200]);
       }
     },
     fetchLocation() {
