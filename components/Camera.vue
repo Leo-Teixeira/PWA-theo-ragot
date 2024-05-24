@@ -1,23 +1,5 @@
 <template>
   <div>
-    <header>
-      <h1>Photo Capture App</h1>
-      <div v-if="location">
-        <p>Your location: {{ location.latitude }}, {{ location.longitude }}</p>
-      </div>
-      <div v-else>
-        <p>Fetching location...</p>
-      </div>
-      <div v-if="battery">
-        <p class="battery-status">
-          Battery: {{ Math.round(battery.level * 100) }}%
-          <span v-if="battery.charging">(Charging)</span>
-        </p>
-      </div>
-      <nuxt-link to="/tel">
-        <button class="home-button">Appel</button>
-      </nuxt-link>
-    </header>
     <main>
       <video ref="video" autoplay></video>
       <button @click="startCamera">Start Camera</button>
@@ -36,6 +18,7 @@
 </template>
 
 <script>
+// import headder from './Headder.vue';
 export default {
   data() {
     return {
@@ -51,9 +34,7 @@ export default {
     this.videoElement = this.$refs.video;
     this.canvasElement = this.$refs.canvas;
     this.requestNotificationPermission();
-    this.fetchLocation();
     this.loadPhotos();
-    this.fetchBatteryStatus();
   },
   methods: {
     async startCamera() {
@@ -86,6 +67,7 @@ export default {
       };
       this.photos.push(photo);
       this.savePhotos();
+      this.showNotification('Photo taken', 'Your photo has been captured successfully!');
     },
     deletePhoto(index) {
       this.photos.splice(index, 1);
@@ -111,23 +93,6 @@ export default {
         navigator.vibrate([200, 100, 200]);
       }
     },
-    fetchLocation() {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            this.location = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            };
-          },
-          (error) => {
-            console.error("Error fetching location:", error);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    },
     savePhotos() {
       localStorage.setItem('photos', JSON.stringify(this.photos));
     },
@@ -135,20 +100,6 @@ export default {
       const photos = localStorage.getItem('photos');
       if (photos) {
         this.photos = JSON.parse(photos);
-      }
-    },
-    async fetchBatteryStatus() {
-      if ('getBattery' in navigator) {
-        try {
-          const battery = await navigator.getBattery();
-          this.battery = battery;
-          battery.addEventListener('chargingchange', this.updateBatteryStatus);
-          battery.addEventListener('levelchange', this.updateBatteryStatus);
-        } catch (error) {
-          console.error("Error fetching battery status:", error);
-        }
-      } else {
-        console.error("Battery Status API is not supported by this browser.");
       }
     },
   }

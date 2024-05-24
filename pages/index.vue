@@ -1,5 +1,8 @@
 <template>
-  <Camera/>
+  <main>
+    <Headder/>
+    <Camera/>
+  </main>
 </template>
 
 <script>

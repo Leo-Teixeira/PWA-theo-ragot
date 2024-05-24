@@ -5,35 +5,55 @@
       <Headder/>
     </header>
     <main>
-      <div class="display">{{ phoneNumber }}</div>
-      <div class="keypad">
-        <button v-for="key in keys" :key="key" @click="appendNumber(key)">{{ key }}</button>
-      </div>
-      <button class="call-button" @click="makeCall">Call</button>
+      <div id="mapid"></div>
     </main>
   </div>
 </template>
 
 <script>
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
 export default {
   data() {
     return {
-      phoneNumber: '',
-      keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#']
+      location: null,
+
     };
   },
-  methods: {
-    appendNumber(key) {
-      this.phoneNumber += key;
-    },
-    makeCall() {
-      if (this.phoneNumber) {
-        window.location.href = `tel:${this.phoneNumber}`;
+  mounted() {
+    this.fetchLocation();
+		var mymap = L.map('map').setView([51.505, -0.09], 13);
+
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(mymap);
+
+		// Ajouter un marqueur à une position spécifique
+		L.marker(this.location).addTo(mymap)
+			.bindPopup('Un marqueur personnalisé !')
+			.openPopup();
+
+	},
+	methods: {
+		fetchLocation() {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.location = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            };
+          },
+          (error) => {
+            console.error("Error fetching location:", error);
+          }
+        );
       } else {
-        alert('Please enter a phone number.');
+        console.error("Geolocation is not supported by this browser.");
       }
-    }
-  }
+    },
+	}
 };
 </script>
 
