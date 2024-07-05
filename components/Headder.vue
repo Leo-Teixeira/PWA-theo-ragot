@@ -23,6 +23,9 @@
       <nuxt-link to="/loc">
         <button class="home-button">Wesh t'es où ?</button>
       </nuxt-link>
+      <nuxt-link to="/document">
+        <button class="home-button">Add document</button>
+      </nuxt-link>
     </header>
   </div>
 </template>
@@ -40,12 +43,12 @@ export default {
   },
   methods: {
     fetchLocation() {
-      if ('geolocation' in navigator) {
+      if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             this.location = {
               latitude: position.coords.latitude,
-              longitude: position.coords.longitude
+              longitude: position.coords.longitude,
             };
           },
           (error) => {
@@ -57,12 +60,12 @@ export default {
       }
     },
     async fetchBatteryStatus() {
-      if ('getBattery' in navigator) {
+      if ("getBattery" in navigator) {
         try {
           const battery = await navigator.getBattery();
           this.battery = battery;
-          battery.addEventListener('chargingchange', this.updateBatteryStatus);
-          battery.addEventListener('levelchange', this.updateBatteryStatus);
+          battery.addEventListener("chargingchange", this.updateBatteryStatus);
+          battery.addEventListener("levelchange", this.updateBatteryStatus);
         } catch (error) {
           console.error("Error fetching battery status:", error);
         }
@@ -70,13 +73,13 @@ export default {
         console.error("Battery Status API is not supported by this browser.");
       }
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
 header {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 15px;
   text-align: center;
@@ -89,11 +92,10 @@ header h1 {
   margin: 0;
 }
 
-
 .home-button {
   padding: 15px 30px;
   font-size: 1.5em;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;

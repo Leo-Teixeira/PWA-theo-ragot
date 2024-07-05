@@ -2,12 +2,14 @@
 <template>
   <div class="dialer">
     <header>
-      <Headder/>
+      <Headder />
     </header>
     <main>
       <div class="display">{{ phoneNumber }}</div>
       <div class="keypad">
-        <button v-for="key in keys" :key="key" @click="appendNumber(key)">{{ key }}</button>
+        <button v-for="key in keys" :key="key" @click="appendNumber(key)">
+          {{ key }}
+        </button>
       </div>
       <button class="call-button" @click="makeCall">Call</button>
     </main>
@@ -18,8 +20,8 @@
 export default {
   data() {
     return {
-      phoneNumber: '',
-      keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#']
+      phoneNumber: "",
+      keys: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"],
     };
   },
   methods: {
@@ -30,10 +32,10 @@ export default {
       if (this.phoneNumber) {
         window.location.href = `tel:${this.phoneNumber}`;
       } else {
-        alert('Please enter a phone number.');
+        alert("Please enter a phone number.");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -43,13 +45,13 @@ export default {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
   border-radius: 10px;
   background-color: #f9f9f9;
 }
 
 header {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 15px;
   border-radius: 10px 10px 0 0;
@@ -78,7 +80,7 @@ header h1 {
 .keypad button {
   padding: 20px;
   font-size: 1.2em;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -92,7 +94,7 @@ header h1 {
 .call-button {
   padding: 15px 30px;
   font-size: 1.5em;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -105,7 +107,7 @@ header h1 {
 .home-button {
   padding: 15px 30px;
   font-size: 1.5em;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
